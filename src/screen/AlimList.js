@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, AsyncStorage,ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, AsyncStorage, ScrollView } from 'react-native';
 import AlimFlatList from '../components/AlimFlatList'
 import axios from 'axios'
 
 export default class AlimList extends Component {
-
     constructor(props) {
         super();
+
         this.state = {
             list: []
         }
-
     }
     componentDidMount = () => {
         this._doOpenApi();
@@ -30,7 +29,6 @@ export default class AlimList extends Component {
                     temp = Object.values(result.VALUE.LIST[0].rsv);
                 })
                 this.setState({ list: temp });
-                console.dir(this.state.list)
             })
             .catch(function (error) {
                 console.log("Error");
@@ -38,9 +36,6 @@ export default class AlimList extends Component {
             });
     }
 
-    ListUp = (DATA) => {
-        return DATA.map((ele, index) => { <AlimFlatList key={index} no={ele.$.No} name={ele.$.Name} rdate={ele.$.RDate} subdate={ele.$.SubDate} /> })
-    }
     render() {
         const { list } = this.state;
         return (
@@ -54,12 +49,13 @@ export default class AlimList extends Component {
                 <View>
                     <Text style={{ backgroundColor: '#ddd' }}>알림 리스트</Text>
                     <ScrollView>
-                    {list.length > 0 ?
-                        list.map((ele, index) => {
-                            return <AlimFlatList key={index} navigation={this.props.navigation} no={ele.$.No} name={ele.$.Name} rdate={ele.$.RDate} subdate={ele.$.SubDate} />
-                        })
-                        : <Text>LOADING...</Text>}
-                        </ScrollView>
+                        {list.length > 0 ?
+                            list.map((ele, index) => {
+                                return <AlimFlatList key={index} index={index} navigation={this.props.navigation} no={ele.$.No}
+                                    name={ele.$.Name} rdate={ele.$.RDate} subdate={ele.$.SubDate} phonenumber={ele.$.RPhone}/>
+                            })
+                            : <Text style={{ alignItems: 'center' }}>LOADING...</Text>}
+                    </ScrollView>
                 </View>
             </View>
         );

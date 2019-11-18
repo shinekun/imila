@@ -8,31 +8,25 @@ import axios from 'axios'
 export default class ListDetail extends Component {
     constructor(props) {
         super();
+
+        this.state = {
+            Phonenumber: ' '
+        }
     }
 
+
     _pressCall = () => {
-        const url = `tel:01012345678`;
+        const url = `tel:${JSON.stringify(this.props.navigation.getParam('Phonenumber', 'phonenum'))}}`;
         console.log(url)
         Linking.openURL(url).catch((err) => console.error('An error occurred', err));
     }
     _pressSms = () => {
-        const url = 'sms:789456123';
+        const url = `sms:${JSON.stringify(this.props.navigation.getParam('Phonenumber', 'phonenum'))}}`;
         Linking.openURL(url).catch((err) => console.error('An error occurred', err));
     }
     _pressDel = () => {
     }
-    _doOpenApi = () => {
-        var parseString = require('react-native-xml2js').parseString;
-        axios.get(`http://itktv.cafe24.com/alimi/manager/`).then(
-            data => {
-                parseString(data.data, function (err, result) {
-                    const tempdata = Object.values(result.VALUE.LIST[0].rsv)
-                    const tempdataitem = Object.values(result.VALUE.NODE[0].item)
-                    console.log(tempdata);
-                })
-            }
-        );
-    }
+
     render() {
         return (
             <View>
@@ -48,7 +42,10 @@ export default class ListDetail extends Component {
                     <ListDetailTouchable onPress={this._pressSms} source={require('../drawable/customer-reviews.png')} />
                     <ListDetailTouchable onPress={this._doOpenApi} source={require('../drawable/delete.png')} />
                 </View>
-                <DivisionView />
+                <DivisionView navigation={this.props.navigation}
+                    index={JSON.stringify(this.props.navigation.getParam('itemId', 'ID'))}
+                    Phonenumber={this.state.Phonenumber}
+                    numChanger={() => this.numChanger()} />
             </View>
         );
     }

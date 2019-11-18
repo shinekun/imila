@@ -8,6 +8,7 @@ import Main from './screen/Main'
 import ListDetail from './screen/ListDetail'
 import AlimFlatList from './components/AlimFlatList'
 import Loading from './components/Loading'
+import DivisionView from './components/DivisionView'
 
 const AppNavigator = createStackNavigator(
     {
@@ -41,6 +42,9 @@ const AppNavigator = createStackNavigator(
         },
         Loading: {
             screen: Loading,
+        },
+        DivisionView:{
+            screen:DivisionView
         }
     },
     {
