@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, ScrollView, FlatList } from 'react-native';
-import axios from 'axios'
 
 export default class DivisionView extends Component {
     constructor(props) {
         super();
 
         this.state = {
-            loading: false,
             list: {}
         }
     }
@@ -16,29 +14,14 @@ export default class DivisionView extends Component {
         this._doOpenApi();
     }
     _doOpenApi = () => {
-        if (this.state.loading) return;
-        var parseString = require('react-native-xml2js').parseString;
-        axios.get(`http://itktv.cafe24.com/alimi/manager/`)
-            .then(data => {
-                var temp;
-                parseString(data.data, function (err, result) {
-                    temp = Object.values(result.VALUE.LIST[0].rsv);
-                })
-                this.setState({ list: temp[this.props.index].$ });
-                this.setState({ loading: true });
-            })
-            .catch(function (error) {
-                console.log("Error");
-                console.log(error);
-            });
+        this.setState({ list: this.props.onFocusListDetail });
     }
 
-
     render() {
-        const { list, loading } = this.state;
+        const {list} = this.state;
         return (
             <ScrollView>
-                {loading ?
+                {
                     <ScrollView style={{ flexDirection: 'column', width: '100%' }}>
                         <View style={styles.oddviewstyle}>
                             <Text style={styles.division}>번호</Text>
@@ -80,8 +63,8 @@ export default class DivisionView extends Component {
                             <Text style={styles.division}>등록일시</Text>
                             <Text style={{ fontSize: 25 }}>{list.SubDate}</Text>
                         </View>
-                    </ScrollView> :
-                    <Text>Loading...</Text>}
+                    </ScrollView> 
+                    }
             </ScrollView>
 
         );

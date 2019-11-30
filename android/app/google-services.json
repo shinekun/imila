@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "583020846187",
+    "firebase_url": "https://alimi-1b8f7.firebaseio.com",
+    "project_id": "alimi-1b8f7",
+    "storage_bucket": "alimi-1b8f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:583020846187:android:96f730a976371eb364252e",
+        "android_client_info": {
+          "package_name": "com.alimi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "583020846187-vgkvruh0isehp06erclf8a6hvselnghc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5MuTxFPAXMBqQ-ixvpF17KjvZwyo6rS0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "583020846187-vgkvruh0isehp06erclf8a6hvselnghc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:583020846187:android:f2e7287e52c0e3d464252e",
+        "android_client_info": {
+          "package_name": "com.alimiapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "583020846187-vgkvruh0isehp06erclf8a6hvselnghc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5MuTxFPAXMBqQ-ixvpF17KjvZwyo6rS0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "583020846187-vgkvruh0isehp06erclf8a6hvselnghc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

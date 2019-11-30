@@ -8,7 +8,8 @@ export default class AlimFlatList extends Component {
     render() {
         return (
             <TouchableOpacity style={{ flex: 1, borderBottomColor: '#ddd', borderBottomWidth: 2 }}
-                onPress={() => { this.props.navigation.navigate('ListDetail', { itemId: this.props.index,Phonenumber:this.props.phonenumber }) }}>
+            onPress={()=>this.props.navigation.navigate('ListDetail', { onFocusListDetail: this.props.onFocusListDetail })}
+            >
                 <View style={{ flexDirection: 'row' }}>
                     <Text style={styles.numtxtstyle}>{this.props.no}</Text>
                     <View style={{ width: '70%' }}>

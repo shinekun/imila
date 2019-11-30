@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage,KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import axios from 'axios'
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class Login extends Component {
     constructor(props) {
@@ -10,18 +11,16 @@ export default class Login extends Component {
             user_id: '',
             user_pw: '',
         }
-
     }
-    //로그인 정보 기억하기
-    //xml 을 json으로
-
+    
     _doLogin = () => {
         if (this.state.user_id != '' || this.state.user_pw != '') {
             axios.get(`http://tktv.co.kr/api/shop/?id=${this.state.user_id}&password=${this.state.user_pw}`)
                 .then(data => {
                     if (data.data.response == "SUCCESS") {
-                        AsyncStorage.setItem("ISLOGIN", JSON.stringify(true));
+                        this.storeData();
                         this.props.navigation.replace('AlimList');
+
                     }
                     else
                         alert('로그인에 실패하였습니다')
@@ -31,10 +30,19 @@ export default class Login extends Component {
             alert('아이디와 비밀번호를 입력해주세요')
     }
 
+    storeData = async () => {
+        try {
+            await AsyncStorage.setItem('LoginId', JSON.stringify(this.state.user_id));
+            await AsyncStorage.setItem('LoginPw', JSON.stringify(this.state.user_pw));
+        } catch (e) {
+            console.log('error storeData')
+            console.log(e)
+        }
+    }
+
     render() {
         return (
-           
- <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+            <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
                 <View>
                     <Text style={styles.welcometext}>{`Welcom Back,`}</Text>
                     <Text style={styles.welcometext2}>Sign in to continue</Text>
@@ -53,14 +61,11 @@ export default class Login extends Component {
                 <View style={styles.btnviewstyle}>
                     <TouchableOpacity
                         style={styles.btnstyle}
-                        onPress={() => this._doLogin()}
-                    >
+                        onPress={() => this._doLogin()}>
                         <Text style={{ fontSize: 20 }}>Login</Text>
                     </TouchableOpacity>
-
                 </View>
-                </KeyboardAvoidingView>
-           
+            </KeyboardAvoidingView>
         );
     }
 }

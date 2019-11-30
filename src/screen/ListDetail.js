@@ -2,29 +2,69 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Linking } from 'react-native';
 import ListDetailTouchable from '../components/ListDetailTouchable'
 import DivisionView from '../components/DivisionView'
-import axios from 'axios'
-
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class ListDetail extends Component {
     constructor(props) {
         super();
-
         this.state = {
-            Phonenumber: ' '
+            list: [],
+            DeleList: []
+        }
+    }
+    componentDidMount = () => {
+        this._doOpenApi();
+    }
+    _doOpenApi = () => {
+        this.setState({ list: this.props.navigation.getParam('onFocusListDetail', 'onFocusListDetail').$ });
+    }
+    _pressCall = () => {
+        if(this.state.list.No != null)
+        {
+        const url = `tel:${JSON.stringify(this.props.navigation.getParam('Phonenumber', 'phonenum'))}}`;
+        Linking.openURL(url).catch((err) => console.error('An error occurred', err));
         }
     }
 
-
-    _pressCall = () => {
-        const url = `tel:${JSON.stringify(this.props.navigation.getParam('Phonenumber', 'phonenum'))}}`;
-        console.log(url)
-        Linking.openURL(url).catch((err) => console.error('An error occurred', err));
-    }
     _pressSms = () => {
+        if(this.state.list.No != null)
+        {
         const url = `sms:${JSON.stringify(this.props.navigation.getParam('Phonenumber', 'phonenum'))}}`;
         Linking.openURL(url).catch((err) => console.error('An error occurred', err));
+        }
     }
-    _pressDel = () => {
+    _pressDel = async () => {
+        if(this.state.list.No != null)
+        {
+            try {
+                await AsyncStorage.getItem('DelList').then(
+                    req => JSON.parse(req))
+                    .then(Json => {
+                        console.log(Json)
+                        if (Json !== null) {                        
+                            console.log(this.state.list.No)
+                            this.setState({
+                                DeleList: Json.concat(this.state.list.No)
+                            })
+                            AsyncStorage.setItem('DelList', JSON.stringify(this.state.DeleList));
+                            this.props.navigation.replace('AlimList');
+                        }
+                        else {
+                            console.log('else')
+                            console.log(this.state.list.No)
+                            this.setState({
+                                DeleList: [this.state.list.No]
+                            })
+                            AsyncStorage.setItem('DelList', JSON.stringify(this.state.DeleList));
+                            this.props.navigation.replace('AlimList');
+                        }
+                    })
+            } catch (e) {
+                console.log('error _pressDel')
+                console.log(e)
+            }
+        }
+       
     }
 
     render() {
@@ -39,13 +79,11 @@ export default class ListDetail extends Component {
                     <Text style={styles.toptxtstyle}>TKTV-인터넷신문/방송</Text>
                     <ListDetailTouchable onPress={this._pressCall}
                         source={require('../drawable/phone-call.png')} />
-                    <ListDetailTouchable onPress={this._pressSms} source={require('../drawable/customer-reviews.png')} />
-                    <ListDetailTouchable onPress={this._doOpenApi} source={require('../drawable/delete.png')} />
+                    <ListDetailTouchable onPress={() => this._pressSms} source={require('../drawable/customer-reviews.png')} />
+                    <ListDetailTouchable onPress={() => this._pressDel()} source={require('../drawable/delete.png')} />
                 </View>
                 <DivisionView navigation={this.props.navigation}
-                    index={JSON.stringify(this.props.navigation.getParam('itemId', 'ID'))}
-                    Phonenumber={this.state.Phonenumber}
-                    numChanger={() => this.numChanger()} />
+                    onFocusListDetail={this.props.navigation.getParam('onFocusListDetail', 'onFocusListDetail').$} />
             </View>
         );
     }
@@ -62,5 +100,4 @@ const styles = StyleSheet.create({
         fontSize: 20,
         margin: 15
     },
-
 });

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { View,AsyncStorage } from 'react-native';
+import { View } from 'react-native';
+import axios from 'axios'
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 export default class App extends Component {
@@ -8,21 +10,34 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-      this.checkLoginStatus();
+    this.checkLoginStatus();
   }
-
-  checkLoginStatus = async () => { 
+  checkLoginStatus = async () => {
     try {
-      const value = await AsyncStorage.getItem('ISLOGIN')
-      if (value !== null) {
-        this.setState({ _islogin: value });
-        this.props.navigation.replace(value==='true'?'AlimList':'Login');
+      if (await AsyncStorage.getItem('LoginId') != null) {
+        var valueId = await AsyncStorage.getItem('LoginId')
+        var valuePw = await AsyncStorage.getItem('LoginPw')
+        valueId = valueId.replace(/"/g, "");
+        valuePw = valuePw.replace(/"/g, "");
+        if (valueId !== null) {
+          axios.get(`http://tktv.co.kr/api/shop/?id=${valueId}&password=${valuePw}`)
+            .then(data => {
+              if (data.data.response === "SUCCESS") {
+                this.props.navigation.replace('AlimList');
+                console.log('로그인 성공');
+              }
+              else {
+                this.props.navigation.replace('Login');
+                console.log('로그인 실패');
+              }
+            }
+            );
+        }
       }
-      else{
-        this.props.navigation.replace('Login');
-      }
+      else { this.props.navigation.replace('Login') };
     } catch (e) {
-      alert('error');
+      console.log('Main.js--getData_Error!!')
+      console.log(e)
     }
   };
   render() {

@@ -1,45 +1,68 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, AsyncStorage, ScrollView } from 'react-native';
-import AlimFlatList from '../components/AlimFlatList'
-import axios from 'axios'
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import AlimFlatList from '../components/AlimFlatList';
+import axios from 'axios';
+import AsyncStorage from '@react-native-community/async-storage';
+import { NavigationEvents } from 'react-navigation';
 
 export default class AlimList extends Component {
     constructor(props) {
         super();
 
         this.state = {
-            list: []
+            list: [],
+            DelList: [],
+            loading: false,
         }
     }
     componentDidMount = () => {
+        this.getData();
         this._doOpenApi();
     }
 
     _doLogout = () => {
-        AsyncStorage.setItem("ISLOGIN", JSON.stringify(false));
+        AsyncStorage.clear()
         this.props.navigation.replace('Login');
     }
     _doOpenApi = () => {
-        if (this.state.loading) return;
         var parseString = require('react-native-xml2js').parseString;
         axios.get(`http://itktv.cafe24.com/alimi/manager/`)
             .then(data => {
-                var temp;
-                parseString(data.data, function (err, result) {
-                    temp = Object.values(result.VALUE.LIST[0].rsv);
+                let temp = [];
+                parseString(data.data, (err, result) => {
+                    temp = Object.values(result.VALUE.LIST[0].rsv).filter(item => !this.state.DelList.includes(item.$.No))
                 })
                 this.setState({ list: temp });
             })
-            .catch(function (error) {
-                console.log("Error");
+            .catch((error) => {
+                console.log("AlimList,_doOpenApi_Error");
                 console.log(error);
             });
     }
+    getData = async () => {
+        try {
+            var DeleList;
+            if (await AsyncStorage.getItem('DelList') != null) {
+                await AsyncStorage.getItem('DelList').then(
+                    req => { DeleList = JSON.parse(req); }
+                )
+                this.setState({
+                    DelList: DeleList,
+                    loading: !this.state.loading
+                })
+            }
+        } catch (e) {
+            console.log('AlimList.js--getData_Error!!')
+            console.log(e)
+        }
+
+    };
 
     render() {
-        const { list } = this.state;
+        const { list, DelList } = this.state;
         return (
             <View style={styles.container}>
+                <NavigationEvents onDidFocus={() => this.getData()} />
                 <View style={styles.viewstyle}>
                     <Text style={styles.txtstyle}>TKTV-인터넷신문/방송</Text>
                     <TouchableOpacity style={styles.touchablestyle} onPress={() => this._doLogout()}>
@@ -52,9 +75,8 @@ export default class AlimList extends Component {
                         {list.length > 0 ?
                             list.map((ele, index) => {
                                 return <AlimFlatList key={index} index={index} navigation={this.props.navigation} no={ele.$.No}
-                                    name={ele.$.Name} rdate={ele.$.RDate} subdate={ele.$.SubDate} phonenumber={ele.$.RPhone}/>
-                            })
-                            : <Text style={{ alignItems: 'center' }}>LOADING...</Text>}
+                                    name={ele.$.Name} rdate={ele.$.RDate} subdate={ele.$.SubDate} phonenumber={ele.$.RPhone} onFocusListDetail={ele}/>
+                            }) : <Text style={{ alignItems: 'center' }}>LOADING...</Text>}
                     </ScrollView>
                 </View>
             </View>
